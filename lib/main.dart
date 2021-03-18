@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
+import 'api/APIController.dart';
+import 'api/Location.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,8 +23,16 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
+  Location loc;
+
+  void getData() async {
+    loc = await APIController.fetchData();
+    //print("DATA: " + loc.lat.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
+    getData();
     List<Widget> hourList = [];
     List<Widget> dayList = [];
     for (var i = 0; i < 24; i++) {
