@@ -6,20 +6,17 @@ import 'keys.dart';
 class APIController {
   static Future<Location> fetchData() async {
     var url = Uri.https('api.openweathermap.org', '/data/2.5/onecall', {
-      'lat': '51.0276',
-      'lon': '4.4807',
+      'lat': '47.8558882',
+      'lon': '34.8951733',
       'appid': Keys.weatherKey,
       'units': 'metric'
     });
     var response = await http.get(url);
     Location data;
     if (response.statusCode == 200) {
-      //try {
+      //todo: try catch
       var jsonResponse = convert.jsonDecode(response.body);
       data = Location.fromJson(jsonResponse);
-      // } catch (e) {
-      //   print(e);
-      // }
     } else {
       print('Request failed with status: ${response.statusCode}.');
     }
