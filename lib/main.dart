@@ -127,154 +127,164 @@ class _HomePageState extends State<HomePage> {
       }
 
       return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          actions: [
-            IconButton(
-                icon: Icon(
-                  Icons.search,
-                  color: Colors.black,
-                  size: 30.0,
-                ),
-                onPressed: () {})
-          ],
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          centerTitle: true,
-          title: Column(
-            children: [
-              Text(
-                "Zaporizhzhia",
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
-              ),
-              Text(
-                DateFormat('EEE h:mm').format(DateTime.now()),
-                style: TextStyle(fontSize: 12, color: Colors.black),
-              ),
-            ],
-          ),
-        ),
-        body: Center(
-            child: Padding(
-          padding: EdgeInsets.all(15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(customProvider.location.current.weather.main,
-                      style: TextStyle(fontSize: 20)),
-                  Padding(
-                    child: Image(
-                      image: AssetImage(
-                          'assets/${customProvider.location.current.weather.icon}.png'),
-                      width: 30,
-                      height: 30,
-                    ),
-                    padding: EdgeInsets.only(left: 10),
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Text("${customProvider.location.current.temp.round()}°",
-                          style: TextStyle(fontSize: 52)),
-                      Text('C', style: TextStyle(fontSize: 24))
-                    ],
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            actions: [
+              IconButton(
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.black,
+                    size: 30.0,
                   ),
-                  Tooltip(
-                      message: "Pressure",
-                      child: Row(
-                        children: [
-                          Text(
-                              customProvider.location.current.pressure
-                                  .toString(),
-                              style: TextStyle(fontSize: 14)),
-                          Padding(
-                            child: Image(
-                              height: 14,
-                              width: 14,
-                              image: AssetImage('assets/barometer.png'),
-                            ),
-                            padding: EdgeInsets.only(left: 5),
-                          )
-                        ],
-                      ))
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                        "feels like ${customProvider.location.current.feels_like.round()}°C",
-                        style: TextStyle(fontSize: 14)),
-                    Tooltip(
-                      message: "Humidity",
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                              customProvider.location.current.humidity
-                                  .toString(),
-                              style: TextStyle(fontSize: 14)),
-                          Padding(
-                            child: Image(
-                              height: 14,
-                              width: 14,
-                              image: AssetImage('assets/humidity.png'),
-                            ),
-                            padding: EdgeInsets.only(left: 5),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                  padding: EdgeInsets.only(top: 20, bottom: 10),
-                  child: Align(
-                    child:
-                        Text("Hourly forecast", style: TextStyle(fontSize: 20)),
-                    alignment: Alignment.centerLeft,
-                  )),
-              SizedBox(
-                  height: 110,
-                  child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Color.fromARGB(75, 214, 214, 214)),
-                      child: Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: ListView(
-                            children: hourList,
-                            scrollDirection: Axis.horizontal,
-                          )))),
-              Container(
-                  padding: EdgeInsets.only(top: 20, bottom: 10),
-                  child: Align(
-                    child:
-                        Text("Daily forecast", style: TextStyle(fontSize: 20)),
-                    alignment: Alignment.centerLeft,
-                  )),
-              SizedBox(
-                height: 130,
-                child: ListView(
-                    scrollDirection: Axis.horizontal, children: dayList),
-              )
+                  onPressed: () {})
             ],
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            centerTitle: true,
+            title: Column(
+              children: [
+                Text(
+                  "Zaporizhzhia",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+                Text(
+                  DateFormat('EEE h:mm').format(DateTime.now()),
+                  style: TextStyle(fontSize: 12, color: Colors.black),
+                ),
+              ],
+            ),
           ),
-        )),
-      );
+          body: RefreshIndicator(
+              onRefresh: customProvider.getData,
+              color: Colors.black,
+              child: ListView(
+                children: [
+                  Center(
+                      child: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(customProvider.location.current.weather.main,
+                                style: TextStyle(fontSize: 20)),
+                            Padding(
+                              child: Image(
+                                image: AssetImage(
+                                    'assets/${customProvider.location.current.weather.icon}.png'),
+                                width: 30,
+                                height: 30,
+                              ),
+                              padding: EdgeInsets.only(left: 10),
+                            )
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                    "${customProvider.location.current.temp.round()}°",
+                                    style: TextStyle(fontSize: 52)),
+                                Text('C', style: TextStyle(fontSize: 24))
+                              ],
+                            ),
+                            Tooltip(
+                                message: "Pressure",
+                                child: Row(
+                                  children: [
+                                    Text(
+                                        customProvider.location.current.pressure
+                                            .toString(),
+                                        style: TextStyle(fontSize: 14)),
+                                    Padding(
+                                      child: Image(
+                                        height: 14,
+                                        width: 14,
+                                        image:
+                                            AssetImage('assets/barometer.png'),
+                                      ),
+                                      padding: EdgeInsets.only(left: 5),
+                                    )
+                                  ],
+                                ))
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                  "feels like ${customProvider.location.current.feels_like.round()}°C",
+                                  style: TextStyle(fontSize: 14)),
+                              Tooltip(
+                                message: "Humidity",
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                        customProvider.location.current.humidity
+                                            .toString(),
+                                        style: TextStyle(fontSize: 14)),
+                                    Padding(
+                                      child: Image(
+                                        height: 14,
+                                        width: 14,
+                                        image:
+                                            AssetImage('assets/humidity.png'),
+                                      ),
+                                      padding: EdgeInsets.only(left: 5),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Container(
+                            padding: EdgeInsets.only(top: 20, bottom: 10),
+                            child: Align(
+                              child: Text("Hourly forecast",
+                                  style: TextStyle(fontSize: 20)),
+                              alignment: Alignment.centerLeft,
+                            )),
+                        SizedBox(
+                            height: 110,
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color.fromARGB(75, 214, 214, 214)),
+                                child: Padding(
+                                    padding: EdgeInsets.only(top: 10),
+                                    child: ListView(
+                                      children: hourList,
+                                      scrollDirection: Axis.horizontal,
+                                    )))),
+                        Container(
+                            padding: EdgeInsets.only(top: 20, bottom: 10),
+                            child: Align(
+                              child: Text("Daily forecast",
+                                  style: TextStyle(fontSize: 20)),
+                              alignment: Alignment.centerLeft,
+                            )),
+                        SizedBox(
+                          height: 130,
+                          child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: dayList),
+                        )
+                      ],
+                    ),
+                  )),
+                ],
+              )));
     });
   }
 }

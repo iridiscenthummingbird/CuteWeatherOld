@@ -6,7 +6,7 @@ class CustomProvider with ChangeNotifier {
   Location _loc;
   Location get location => _loc;
 
-  void getData() async {
+  Future<void> getData() async {
     _loc = await APIController.fetchData();
     notifyListeners();
   }
