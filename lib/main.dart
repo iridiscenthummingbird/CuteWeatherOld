@@ -47,7 +47,6 @@ class _HomePageState extends State<HomePage> {
 
       List<Widget> hourList = [];
       List<Widget> dayList = [];
-      int i = 0;
       for (int i = 0; i < 24; i++) {
         hourList.add(
           Padding(
@@ -56,38 +55,38 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                     padding: EdgeInsets.only(bottom: 5),
                     child: Text(
-                        "${customProvider.location.hourly[i].temp.round()}°",
-                        style: TextStyle(fontSize: 20))),
+                        DateFormat.Hm().format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                customProvider.location.hourly[i].dt * 1000)),
+                        style: TextStyle(fontSize: 16, color: Colors.black54))),
                 Padding(
                     padding: EdgeInsets.only(bottom: 5),
                     child: Image(
                       image: AssetImage(
                           'assets/${customProvider.location.hourly[i].weather.icon}.png'),
-                      width: 30,
-                      height: 30,
+                      width: 41,
+                      height: 41,
                     )),
                 Padding(
                     padding: EdgeInsets.only(bottom: 5),
                     child: Text(
-                        DateFormat.Hm().format(
-                            DateTime.fromMillisecondsSinceEpoch(
-                                customProvider.location.hourly[i].dt * 1000)),
-                        style: TextStyle(fontSize: 16))),
-                Text(
-                    DateFormat('d MMM').format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                            customProvider.location.hourly[i].dt * 1000)),
-                    style: TextStyle(fontSize: 12))
+                        "${customProvider.location.hourly[i].temp.round()}°",
+                        style: TextStyle(fontSize: 20))),
+                // Text(
+                //     DateFormat('d MMM').format(
+                //         DateTime.fromMillisecondsSinceEpoch(
+                //             customProvider.location.hourly[i].dt * 1000)),
+                //     style: TextStyle(fontSize: 12))
               ],
             ),
-            padding: EdgeInsets.only(right: 10, left: i == 0 ? 5 : 0),
+            padding: EdgeInsets.only(right: 10, left: i == 0 ? 10 : 0),
           ),
         );
       }
-
+      int i = 0;
       for (var item in customProvider.location.daily) {
         dayList.add(Padding(
-          padding: EdgeInsets.only(right: 10),
+          padding: EdgeInsets.only(right: i < 7 ? 10 : 0),
           child: Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -124,30 +123,46 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ));
+        i++;
       }
 
       return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.search,
+                  color: Colors.black,
+                  size: 30.0,
+                ),
+                onPressed: () {})
+          ],
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          centerTitle: true,
+          title: Column(
+            children: [
+              Text(
+                "Zaporizhzhia",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+              ),
+              Text(
+                DateFormat('EEE h:mm').format(DateTime.now()),
+                style: TextStyle(fontSize: 12, color: Colors.black),
+              ),
+            ],
+          ),
+        ),
         body: Center(
             child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(15),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 10),
-                child: Text(
-                  "Zaporizhzhia",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 20),
-                child: Text(
-                  DateFormat.yMd().format(DateTime.fromMillisecondsSinceEpoch(
-                      customProvider.location.current.dt * 1000)),
-                  style: TextStyle(fontSize: 12),
-                ),
-              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -174,20 +189,24 @@ class _HomePageState extends State<HomePage> {
                       Text('C', style: TextStyle(fontSize: 24))
                     ],
                   ),
-                  Row(
-                    children: [
-                      Text(customProvider.location.current.pressure.toString(),
-                          style: TextStyle(fontSize: 14)),
-                      Padding(
-                        child: Image(
-                          height: 14,
-                          width: 14,
-                          image: AssetImage('assets/barometer.png'),
-                        ),
-                        padding: EdgeInsets.only(left: 5),
-                      )
-                    ],
-                  )
+                  Tooltip(
+                      message: "Pressure",
+                      child: Row(
+                        children: [
+                          Text(
+                              customProvider.location.current.pressure
+                                  .toString(),
+                              style: TextStyle(fontSize: 14)),
+                          Padding(
+                            child: Image(
+                              height: 14,
+                              width: 14,
+                              image: AssetImage('assets/barometer.png'),
+                            ),
+                            padding: EdgeInsets.only(left: 5),
+                          )
+                        ],
+                      ))
                 ],
               ),
               Padding(
@@ -198,21 +217,25 @@ class _HomePageState extends State<HomePage> {
                     Text(
                         "feels like ${customProvider.location.current.feels_like.round()}°C",
                         style: TextStyle(fontSize: 14)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                            customProvider.location.current.humidity.toString(),
-                            style: TextStyle(fontSize: 14)),
-                        Padding(
-                          child: Image(
-                            height: 14,
-                            width: 14,
-                            image: AssetImage('assets/humidity.png'),
-                          ),
-                          padding: EdgeInsets.only(left: 5),
-                        )
-                      ],
+                    Tooltip(
+                      message: "Humidity",
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                              customProvider.location.current.humidity
+                                  .toString(),
+                              style: TextStyle(fontSize: 14)),
+                          Padding(
+                            child: Image(
+                              height: 14,
+                              width: 14,
+                              image: AssetImage('assets/humidity.png'),
+                            ),
+                            padding: EdgeInsets.only(left: 5),
+                          )
+                        ],
+                      ),
                     )
                   ],
                 ),
@@ -225,7 +248,7 @@ class _HomePageState extends State<HomePage> {
                     alignment: Alignment.centerLeft,
                   )),
               SizedBox(
-                  height: 115,
+                  height: 110,
                   child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
