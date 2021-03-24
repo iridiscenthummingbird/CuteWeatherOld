@@ -3,6 +3,8 @@ import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'provider/customProvider.dart';
+import 'package:dotted_line/dotted_line.dart';
+import 'package:vector_math/vector_math.dart' as vector;
 
 void main() {
   runApp(MyApp());
@@ -36,6 +38,71 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     context.read<CustomProvider>().getData();
+  }
+
+  String uvi(int val) {
+    if (val >= 0 && val <= 2) {
+      return "Low";
+    } else if (val >= 3 && val <= 5) {
+      return "Moderate";
+    } else if (val >= 6 && val <= 7) {
+      return "High";
+    } else if (val >= 8 && val <= 10) {
+      return "Very high";
+    } else if (val >= 11) {
+      return "Extreme";
+    }
+    return "";
+  }
+
+  String windDeg(double deg) {
+    if (deg >= 22.5 && deg < 67.5) {
+      return "SW";
+    } else if (deg >= 67.5 && deg < 112.5) {
+      return "W";
+    } else if (deg >= 112.5 && deg < 157.5) {
+      return "NW";
+    } else if (deg >= 157.5 && deg < 202.5) {
+      return "N";
+    } else if (deg >= 202.5 && deg < 247.5) {
+      return "NE";
+    } else if (deg >= 247.5 && deg < 292.5) {
+      return "E";
+    } else if (deg >= 292.5 && deg < 337.5) {
+      return "SE";
+    } else {
+      return "S";
+    }
+  }
+
+  int getBeaufort(double speed) {
+    if (speed < 0.5) {
+      return 0;
+    } else if (speed >= 0.5 && speed < 1.5) {
+      return 1;
+    } else if (speed >= 1.5 && speed < 3.3) {
+      return 2;
+    } else if (speed >= 3.3 && speed < 5.5) {
+      return 3;
+    } else if (speed >= 5.5 && speed < 7.9) {
+      return 4;
+    } else if (speed >= 7.9 && speed < 10.7) {
+      return 5;
+    } else if (speed >= 10.7 && speed < 13.8) {
+      return 6;
+    } else if (speed >= 13.9 && speed < 17.1) {
+      return 7;
+    } else if (speed >= 17.2 && speed < 20.7) {
+      return 8;
+    } else if (speed >= 20.7 && speed < 24.4) {
+      return 9;
+    } else if (speed >= 24.4 && speed < 28.4) {
+      return 10;
+    } else if (speed >= 28.4 && speed < 32.6) {
+      return 11;
+    } else {
+      return 12;
+    }
   }
 
   @override
@@ -279,7 +346,322 @@ class _HomePageState extends State<HomePage> {
                           child: ListView(
                               scrollDirection: Axis.horizontal,
                               children: dayList),
-                        )
+                        ),
+                        Container(
+                            padding: EdgeInsets.only(top: 20, bottom: 10),
+                            child: Align(
+                              child: Text("Wind and pressure",
+                                  style: TextStyle(fontSize: 20)),
+                              alignment: Alignment.centerLeft,
+                            )),
+                        SizedBox(
+                            height: 110,
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color.fromARGB(75, 214, 214, 214)),
+                                child: Padding(
+                                    padding: EdgeInsets.all(10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Transform.rotate(
+                                                child: Image(
+                                                  image: AssetImage(
+                                                      'assets/down-arrow.png'),
+                                                ),
+                                                angle: vector.radians(
+                                                    customProvider.location
+                                                        .current.wind_deg)),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 7, bottom: 7),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                  windDeg(customProvider
+                                                      .location
+                                                      .current
+                                                      .wind_deg),
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      color: Colors.black54)),
+                                              Text(
+                                                  "${customProvider.location.current.wind_speed.toString()} m/s",
+                                                  style:
+                                                      TextStyle(fontSize: 18)),
+                                              Text(
+                                                  "${getBeaufort(customProvider.location.current.wind_speed).toString()} Beaufort${customProvider.location.current.wind_speed >= 1.5 ? "s" : ""}", //посчитать
+                                                  style:
+                                                      TextStyle(fontSize: 18))
+                                            ],
+                                          ),
+                                        ),
+                                        VerticalDivider(
+                                          thickness: 1,
+                                          color: Colors.black45,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 7, bottom: 7),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("Pressure",
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      color: Colors.black54)),
+                                              Image(
+                                                height: 20,
+                                                width: 20,
+                                                image: AssetImage(
+                                                    'assets/barometer.png'),
+                                              ),
+                                              Text(
+                                                  "${customProvider.location.current.pressure.toString()} mbar",
+                                                  style:
+                                                      TextStyle(fontSize: 18))
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    )))),
+                        Container(
+                            padding: EdgeInsets.only(top: 20, bottom: 10),
+                            child: Align(
+                              child: Text("Details",
+                                  style: TextStyle(fontSize: 20)),
+                              alignment: Alignment.centerLeft,
+                            )),
+                        SizedBox(
+                            height: 255,
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color.fromARGB(75, 214, 214, 214)),
+                                child: Padding(
+                                    padding: EdgeInsets.only(top: 10),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                            child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Image(
+                                              height: 64,
+                                              width: 64,
+                                              image: AssetImage(
+                                                  'assets/${customProvider.location.current.weather.icon}.png'), //увеличить размер всех картинок
+                                            )
+                                          ],
+                                        )),
+                                        Expanded(
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right: 5),
+                                                            child: Image(
+                                                              height: 16,
+                                                              width: 16,
+                                                              image: AssetImage(
+                                                                  'assets/humidity.png'),
+                                                            )),
+                                                        Text(
+                                                          "Humidity",
+                                                          style: TextStyle(
+                                                              fontSize: 16),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Text(
+                                                        "${customProvider.location.current.humidity.toString()}%",
+                                                        style: TextStyle(
+                                                            fontSize: 16))
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: DottedLine(),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right: 5),
+                                                            child: Image(
+                                                              height: 16,
+                                                              width: 16,
+                                                              image: AssetImage(
+                                                                  'assets/sun.png'),
+                                                            )),
+                                                        Text(
+                                                          "UV-index",
+                                                          style: TextStyle(
+                                                              fontSize: 16),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Text(
+                                                        "${customProvider.location.current.uvi.toString()} (${uvi(customProvider.location.current.uvi.round())})",
+                                                        style: TextStyle(
+                                                            fontSize: 16))
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: DottedLine(),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right: 5),
+                                                            child: Image(
+                                                              height: 16,
+                                                              width: 16,
+                                                              image: AssetImage(
+                                                                  'assets/eye.png'),
+                                                            )),
+                                                        Text(
+                                                          "Visibility",
+                                                          style: TextStyle(
+                                                              fontSize: 16),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Text(
+                                                        "${customProvider.location.current.visibility / 1000} km",
+                                                        style: TextStyle(
+                                                            fontSize: 16))
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: DottedLine(),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right: 5),
+                                                            child: Image(
+                                                              height: 16,
+                                                              width: 16,
+                                                              image: AssetImage(
+                                                                  'assets/dew_point.png'),
+                                                            )),
+                                                        Text(
+                                                          "Dew point",
+                                                          style: TextStyle(
+                                                              fontSize: 16),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Text(
+                                                        "${customProvider.location.current.dew_point.round()}°",
+                                                        style: TextStyle(
+                                                            fontSize: 16))
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: DottedLine(),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right: 5),
+                                                            child: Image(
+                                                              height: 16,
+                                                              width: 16,
+                                                              image: AssetImage(
+                                                                  'assets/03d.png'),
+                                                            )),
+                                                        Text(
+                                                          "Clouds",
+                                                          style: TextStyle(
+                                                              fontSize: 16),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Text(
+                                                        "${customProvider.location.current.clouds}%",
+                                                        style: TextStyle(
+                                                            fontSize: 16))
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          flex: 2,
+                                        )
+                                      ],
+                                    )))),
                       ],
                     ),
                   )),
