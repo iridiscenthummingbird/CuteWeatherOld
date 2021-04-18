@@ -33,6 +33,66 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
+class CitySearch extends SearchDelegate {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            query = "";
+          })
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          close(context, null);
+        });
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return null;
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    context.read<CustomProvider>().getCity(query);
+
+    return Consumer<CustomProvider>(builder: (context, customProvider, _) {
+      if (customProvider.city == null || query == '') {
+        //return Center(child: CircularProgressIndicator());
+        return Center();
+      }
+      return Padding(
+          padding: EdgeInsets.only(top: 5, left: 10, right: 10),
+          child: ListTile(
+            leading: Image(
+              image:
+                  AssetImage('assets/${customProvider.city.weather.icon}.png'),
+              width: 40,
+              height: 40,
+            ),
+            title:
+                Text(customProvider.city.name, style: TextStyle(fontSize: 18)),
+            subtitle: Text(
+              "${customProvider.city.temp.round()}°",
+              style: TextStyle(fontSize: 16),
+            ),
+            onTap: () {
+              customProvider.setCity(customProvider.city);
+              customProvider.getData();
+              close(context, null);
+            },
+          ));
+    });
+  }
+}
+
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
@@ -108,7 +168,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<CustomProvider>(builder: (context, customProvider, _) {
-      if (customProvider.location == null) {
+      if (customProvider.location == null || customProvider.city == null) {
         return Center(child: CircularProgressIndicator());
       }
 
@@ -139,11 +199,6 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                         "${customProvider.location.hourly[i].temp.round()}°",
                         style: TextStyle(fontSize: 20))),
-                // Text(
-                //     DateFormat('d MMM').format(
-                //         DateTime.fromMillisecondsSinceEpoch(
-                //             customProvider.location.hourly[i].dt * 1000)),
-                //     style: TextStyle(fontSize: 12))
               ],
             ),
             padding: EdgeInsets.only(right: 10, left: i == 0 ? 10 : 0),
@@ -203,7 +258,9 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.black,
                     size: 30.0,
                   ),
-                  onPressed: () {})
+                  onPressed: () {
+                    showSearch(context: context, delegate: CitySearch());
+                  })
             ],
             backgroundColor: Colors.transparent,
             elevation: 0.0,
@@ -211,7 +268,7 @@ class _HomePageState extends State<HomePage> {
             title: Column(
               children: [
                 Text(
-                  "Zaporizhzhia",
+                  customProvider.city.name,
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

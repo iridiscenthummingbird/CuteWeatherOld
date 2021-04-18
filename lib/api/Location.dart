@@ -17,7 +17,9 @@ class Location {
   List<Hourly> get hourly => _hourly;
   List<Daily> _daily;
   List<Daily> get daily => _daily;
-
+  String _name;
+  String get name => _name;
+  set name(String val) => _name = val;
   Location(this._lat, this._lon, this._timezone, this._timezone_offset,
       this._current);
 
